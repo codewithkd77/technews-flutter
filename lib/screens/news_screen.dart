@@ -286,9 +286,19 @@ class _NewsTabState extends State<NewsTab> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
+            print("Error: ${snapshot.error}");
             return Center(child: Text("Error loading news"));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No news available"));
+            return RefreshIndicator(
+              onRefresh: () async {
+                fetchNews();
+              },
+              child: ListView(
+                children: [
+                  Center(child: Text("No news available")),
+                ],
+              ),
+            );
           }
 
           return ListView.builder(

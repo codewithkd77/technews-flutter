@@ -58,20 +58,22 @@ class _NewsDetailScreenState extends State<NewsDetailScreen>
 
   void toggleBookmark() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> savedNewsList = prefs.getStringList('bookmarkedNews') ?? [];
+    String? savedBookmarks = prefs.getString('bookmarked_news');
+    List<dynamic> savedNewsList =
+        savedBookmarks != null ? jsonDecode(savedBookmarks) : [];
 
     String newsJson = jsonEncode(widget.news);
 
     setState(() {
       if (isBookmarked) {
-        savedNewsList.remove(newsJson);
+        savedNewsList.removeWhere((item) => jsonEncode(item) == newsJson);
       } else {
-        savedNewsList.add(newsJson);
+        savedNewsList.add(widget.news);
       }
       isBookmarked = !isBookmarked;
     });
 
-    await prefs.setStringList('bookmarkedNews', savedNewsList);
+    await prefs.setString('bookmarked_news', jsonEncode(savedNewsList));
     print("Updated bookmarks: $savedNewsList"); // Debugging print
   }
 

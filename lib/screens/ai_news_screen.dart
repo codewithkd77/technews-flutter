@@ -74,7 +74,16 @@ class _MyNewsScreenState extends State<MyNewsScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Error loading AI news"));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No AI news available"));
+            return RefreshIndicator(
+              onRefresh: () async {
+                fetchMyNews();
+              },
+              child: ListView(
+                children: [
+                  Center(child: Text("No AI news available")),
+                ],
+              ),
+            );
           }
 
           return ListView.builder(
@@ -107,8 +116,7 @@ class _MyNewsScreenState extends State<MyNewsScreen> {
                           style: TextStyle(color: Colors.grey),
                         ),
                         SizedBox(height: 5),
-                        _buildClickableUrl(
-                            news['url']), // **Now properly clickable**
+                        _buildClickableUrl(news['url']),
                       ],
                     ),
                   ),

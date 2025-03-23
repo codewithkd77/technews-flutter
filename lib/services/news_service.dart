@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class NewsService {
-  static const String apiUrl = "Your api route here";
-  static const String aiNewsApiUrl = "Your api route here";
+  static const String apiUrl = "YOUR-API-KEY-HERE";
+  static const String aiNewsApiUrl = "YOUR-API-KEY-HERE";
 
   // Fetch Tech News
   Future<List<dynamic>> fetchNews() async {
