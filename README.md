@@ -1,5 +1,3 @@
-* [![Flutter][Flutter]][Next-url]
-
 # TechNews Flutter App
 
 TechNews is a Flutter-based mobile application that provides the latest tech news.
@@ -74,6 +72,8 @@ flutter build ios --release
 Note: You need a macOS machine with Xcode installed to build the iOS app.
 
 ### Contributing
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 If you want to contribute to this project, please fork the repository and create a pull request with your changes.
 
