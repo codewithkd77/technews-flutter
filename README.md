@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 # TechNews Flutter App
 
-![Screenshot1](https://github.com/codewithkd77/Amazon_clone/assets/135022358/8f0462fc-2cf2-4f3e-9ea1-a80a586ecfbf)
+![Screenshot1]([https://github.com/codewithkd77/Amazon_clone/assets/135022358/8f0462fc-2cf2-4f3e-9ea1-a80a586ecfbf](https://github.com/codewithkd77/technews-flutter/blob/main/image1.jpeg?raw=true))
 
 TechNews is a Flutter-based mobile application that provides the latest tech news.
 
