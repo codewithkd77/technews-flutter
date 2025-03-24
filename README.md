@@ -1,7 +1,8 @@
 <a id="readme-top"></a>
 # TechNews Flutter App
 
-https://raw.githubusercontent.com/codewithkd77/technews-flutter/refs/heads/main/image1.jpeg
+![Alt text](https://raw.githubusercontent.com/codewithkd77/technews-flutter/refs/heads/main/image1.jpeg)
+
 
 TechNews is a Flutter-based mobile application that provides the latest tech news.
 
