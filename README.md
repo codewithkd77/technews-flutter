@@ -1,3 +1,5 @@
+* [![Flutter][Flutter]][Next-url]
+
 # TechNews Flutter App
 
 TechNews is a Flutter-based mobile application that provides the latest tech news.
