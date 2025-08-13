@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'news_detail_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'news_detail_screen.dart';
+import '../bloc/saved_news/saved_news_bloc.dart';
+import '../bloc/saved_news/saved_news_event.dart';
+import '../bloc/saved_news/saved_news_state.dart';
 
 class SavedNewsScreen extends StatefulWidget {
   @override
@@ -10,39 +12,59 @@ class SavedNewsScreen extends StatefulWidget {
 }
 
 class _SavedNewsScreenState extends State<SavedNewsScreen> {
-  List<dynamic> savedNews = [];
-
   @override
   void initState() {
     super.initState();
-    fetchSavedNews();
-  }
-
-  Future<void> fetchSavedNews() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedBookmarks = prefs.getString('bookmarked_news');
-    if (savedBookmarks != null) {
-      setState(() {
-        savedNews = jsonDecode(savedBookmarks);
-      });
-    }
+    // Initialize saved news loading when widget is created
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<SavedNewsBloc>().add(const SavedNewsLoaded());
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: fetchSavedNews,
-        child: savedNews.isEmpty
-            ? ListView(
+      body: BlocBuilder<SavedNewsBloc, SavedNewsState>(
+        builder: (context, state) {
+          if (state is SavedNewsLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is SavedNewsError) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<SavedNewsBloc>().add(const SavedNewsRefreshed());
+              },
+              child: ListView(
                 children: [
-                  Center(child: Text("No saved news available")),
+                  Center(
+                      child:
+                          Text("Error loading saved news: ${state.message}")),
                 ],
-              )
-            : ListView.builder(
-                itemCount: savedNews.length,
+              ),
+            );
+          } else if (state is SavedNewsLoadSuccess) {
+            if (state.isEmpty) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<SavedNewsBloc>().add(const SavedNewsRefreshed());
+                },
+                child: ListView(
+                  children: [
+                    Center(child: Text("No saved news available")),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<SavedNewsBloc>().add(const SavedNewsRefreshed());
+              },
+              child: ListView.builder(
+                itemCount: state.savedArticles.length,
                 itemBuilder: (context, index) {
-                  final news = savedNews[index];
+                  final news = state.savedArticles[index];
 
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -58,7 +80,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  NewsDetailScreen(news: news),
+                                  NewsDetailScreen(article: news),
                             ),
                           );
                         },
@@ -69,7 +91,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                               borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(16)),
                               child: Image.network(
-                                news['imageUrl'] ?? '',
+                                news.imageUrl ?? '',
                                 height: 180,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
@@ -88,7 +110,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    news['title'],
+                                    news.title,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -98,7 +120,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    news['description'] ??
+                                    news.description ??
                                         'No description available',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -111,7 +133,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                                   Row(
                                     children: [
                                       Text(
-                                        news['source'] ?? 'Unknown',
+                                        news.source ?? 'Unknown',
                                         style: TextStyle(
                                           color: Colors.blue,
                                           fontWeight: FontWeight.w500,
@@ -123,7 +145,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                                           size: 16, color: Colors.grey),
                                       SizedBox(width: 4),
                                       Text(
-                                        getTimeAgo(news['createdAt']),
+                                        _getTimeAgo(news.createdAt),
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 12),
                                       ),
@@ -139,11 +161,25 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
                   );
                 },
               ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<SavedNewsBloc>().add(const SavedNewsRefreshed());
+            },
+            child: ListView(
+              children: [
+                Center(child: Text("No saved news available")),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  String getTimeAgo(String? createdAt) {
+  String _getTimeAgo(String? createdAt) {
     if (createdAt == null || createdAt.isEmpty) return "Unknown time";
     try {
       DateTime parsedDate = DateTime.parse(createdAt).toLocal();
