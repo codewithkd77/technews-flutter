@@ -1,9 +1,7 @@
 import 'dart:io';
 import '../errors/exceptions.dart';
 
-/// Network utility functions and connectivity checks
 class NetworkUtils {
-  /// Checks if the device has internet connectivity
   static Future<bool> hasInternetConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -13,12 +11,10 @@ class NetworkUtils {
     }
   }
 
-  /// Handles HTTP response and throws appropriate exceptions
   static void handleHttpResponse(int statusCode, String body) {
     switch (statusCode) {
       case 200:
       case 201:
-        // Success - no exception needed
         break;
       case 400:
         throw const ApiException(

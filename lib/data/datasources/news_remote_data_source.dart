@@ -6,7 +6,6 @@ import '../../core/utils/network_utils.dart';
 import '../../models/news_article.dart';
 import 'news_data_source.dart';
 
-/// Implementation of remote news data source using HTTP API
 class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
   final http.Client httpClient;
 
@@ -15,7 +14,6 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
   @override
   Future<List<NewsArticle>> fetchNews() async {
-    // Check internet connectivity
     if (!await NetworkUtils.hasInternetConnection()) {
       throw const NetworkException(
         message: 'No internet connection available',
@@ -51,7 +49,6 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
 
   @override
   Future<List<NewsArticle>> fetchAiNews() async {
-    // Check internet connectivity
     if (!await NetworkUtils.hasInternetConnection()) {
       throw const NetworkException(
         message: 'No internet connection available',
@@ -60,7 +57,6 @@ class NewsRemoteDataSourceImpl implements NewsRemoteDataSource {
     }
 
     try {
-      // Note: AI News API URL needs to be properly configured
       if (ApiConstants.aiNewsApiUrl == 'YOUR-API-KEY-HERE') {
         throw const ApiException(
           message: 'AI News API not configured',

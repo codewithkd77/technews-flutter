@@ -5,7 +5,6 @@ import '../../core/errors/exceptions.dart';
 import '../../models/news_article.dart';
 import 'news_data_source.dart';
 
-/// Implementation of local news data source using SharedPreferences
 class NewsLocalDataSourceImpl implements NewsLocalDataSource {
   final SharedPreferences sharedPreferences;
 
@@ -57,7 +56,6 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
       return bookmarkedNews
           .any((bookmarked) => bookmarked.title == article.title);
     } catch (e) {
-      // Return false if unable to check (graceful degradation)
       return false;
     }
   }
@@ -67,7 +65,6 @@ class NewsLocalDataSourceImpl implements NewsLocalDataSource {
     try {
       final bookmarkedNews = await getBookmarkedNews();
 
-      // Check if already bookmarked to avoid duplicates
       if (!bookmarkedNews
           .any((bookmarked) => bookmarked.title == article.title)) {
         bookmarkedNews.add(article);

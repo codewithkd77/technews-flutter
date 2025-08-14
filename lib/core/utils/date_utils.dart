@@ -1,8 +1,6 @@
 import 'package:intl/intl.dart';
 
-/// Utility functions for date and time operations
 class DateUtils {
-  /// Formats a date string to a more readable format
   static String formatDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return 'Unknown date';
 
@@ -14,7 +12,6 @@ class DateUtils {
     }
   }
 
-  /// Formats a date string to show time ago (e.g., "2 hours ago")
   static String timeAgo(String? dateString) {
     if (dateString == null || dateString.isEmpty) return 'Unknown time';
 
@@ -39,7 +36,6 @@ class DateUtils {
     }
   }
 
-  /// Checks if a date string is today
   static bool isToday(String? dateString) {
     if (dateString == null || dateString.isEmpty) return false;
 

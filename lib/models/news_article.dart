@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Data model representing a news article
-/// Contains all the properties needed to display and manage news articles
 class NewsArticle extends Equatable {
   final String title;
   final String? description;
@@ -21,7 +19,6 @@ class NewsArticle extends Equatable {
     this.createdAt,
   });
 
-  /// Factory constructor to create NewsArticle from JSON
   factory NewsArticle.fromJson(Map<String, dynamic> json) {
     return NewsArticle(
       title: json['title'] ?? '',
@@ -47,7 +44,6 @@ class NewsArticle extends Equatable {
     };
   }
 
-  /// Create a copy of NewsArticle with updated fields
   NewsArticle copyWith({
     String? title,
     String? description,
