@@ -2,31 +2,16 @@ import '../../core/errors/exceptions.dart';
 import '../../models/news_article.dart';
 import '../datasources/news_data_source.dart';
 
-/// Repository interface for news-related operations
 abstract class NewsRepository {
-  /// Fetches general tech news
   Future<List<NewsArticle>> fetchNews();
-
-  /// Fetches AI-specific news
   Future<List<NewsArticle>> fetchAiNews();
-
-  /// Loads bookmarked news from local storage
   Future<List<NewsArticle>> loadBookmarkedNews();
-
-  /// Checks if a specific news article is bookmarked
   Future<bool> isNewsBookmarked(NewsArticle article);
-
-  /// Adds a news article to bookmarks
   Future<List<NewsArticle>> addToBookmarks(NewsArticle article);
-
-  /// Removes a news article from bookmarks
   Future<List<NewsArticle>> removeFromBookmarks(NewsArticle article);
-
-  /// Clears all bookmarks
   Future<void> clearAllBookmarks();
 }
 
-/// Implementation of NewsRepository that combines remote and local data sources
 class NewsRepositoryImpl implements NewsRepository {
   final NewsRemoteDataSource remoteDataSource;
   final NewsLocalDataSource localDataSource;

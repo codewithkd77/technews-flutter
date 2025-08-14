@@ -1,4 +1,3 @@
-/// Base exception class for the application
 abstract class AppException implements Exception {
   final String message;
   final String? code;
@@ -16,7 +15,6 @@ abstract class AppException implements Exception {
   }
 }
 
-/// Exception thrown when there's a network connectivity issue
 class NetworkException extends AppException {
   const NetworkException({
     required String message,
@@ -29,7 +27,6 @@ class NetworkException extends AppException {
         );
 }
 
-/// Exception thrown when API returns an error
 class ApiException extends AppException {
   final int? statusCode;
 
@@ -50,7 +47,6 @@ class ApiException extends AppException {
   }
 }
 
-/// Exception thrown when there's an issue with local storage
 class CacheException extends AppException {
   const CacheException({
     required String message,
@@ -63,7 +59,6 @@ class CacheException extends AppException {
         );
 }
 
-/// Exception thrown when data parsing fails
 class ParseException extends AppException {
   const ParseException({
     required String message,
@@ -76,7 +71,6 @@ class ParseException extends AppException {
         );
 }
 
-/// Exception thrown when a requested resource is not found
 class NotFoundException extends AppException {
   const NotFoundException({
     required String message,

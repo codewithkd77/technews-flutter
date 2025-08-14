@@ -15,7 +15,6 @@ import 'bloc/news_detail/news_detail_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
 
   runApp(MyApp(sharedPreferences: sharedPreferences));
@@ -28,13 +27,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Create data sources
     final remoteDataSource =
         NewsRemoteDataSourceImpl(httpClient: http.Client());
     final localDataSource =
         NewsLocalDataSourceImpl(sharedPreferences: sharedPreferences);
 
-    // Create repository instance with dependency injection
     final newsRepository = NewsRepositoryImpl(
       remoteDataSource: remoteDataSource,
       localDataSource: localDataSource,
@@ -42,23 +39,18 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        // Navigation BLoC for handling bottom navigation and search
         BlocProvider<NavigationBloc>(
           create: (context) => NavigationBloc(),
         ),
-        // News BLoC for handling general tech news
         BlocProvider<NewsBloc>(
           create: (context) => NewsBloc(newsRepository: newsRepository),
         ),
-        // AI News BLoC for handling AI-specific news
         BlocProvider<AiNewsBloc>(
           create: (context) => AiNewsBloc(newsRepository: newsRepository),
         ),
-        // Saved News BLoC for handling bookmarked articles
         BlocProvider<SavedNewsBloc>(
           create: (context) => SavedNewsBloc(newsRepository: newsRepository),
         ),
-        // News Detail BLoC for handling article detail screen
         BlocProvider<NewsDetailBloc>(
           create: (context) => NewsDetailBloc(newsRepository: newsRepository),
         ),

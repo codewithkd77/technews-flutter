@@ -10,8 +10,6 @@ import '../../models/news_article.dart';
 import 'news_detail_event.dart';
 import 'news_detail_state.dart';
 
-/// BLoC responsible for managing news detail screen functionality
-/// Handles bookmark operations, sharing, and URL launching
 class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
   final NewsRepository _newsRepository;
   NewsArticle? _currentArticle;
@@ -19,15 +17,12 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
   NewsDetailBloc({required NewsRepository newsRepository})
       : _newsRepository = newsRepository,
         super(const NewsDetailInitial()) {
-    // Register event handlers
     on<NewsDetailInitialized>(_onNewsDetailInitialized);
     on<NewsDetailBookmarkToggled>(_onNewsDetailBookmarkToggled);
     on<NewsDetailShared>(_onNewsDetailShared);
     on<NewsDetailUrlOpened>(_onNewsDetailUrlOpened);
   }
 
-  /// Handles news detail initialization
-  /// Loads the article and checks if it's bookmarked
   Future<void> _onNewsDetailInitialized(
       NewsDetailInitialized event, Emitter<NewsDetailState> emit) async {
     emit(const NewsDetailLoading());
@@ -42,7 +37,6 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
         isBookmarked: isBookmarked,
       ));
 
-      // Simulate animation completion after a delay
       await Future.delayed(const Duration(milliseconds: 800));
 
       if (state is NewsDetailLoaded) {
@@ -54,8 +48,6 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
     }
   }
 
-  /// Handles bookmark toggle
-  /// Adds or removes the article from bookmarks
   Future<void> _onNewsDetailBookmarkToggled(
       NewsDetailBookmarkToggled event, Emitter<NewsDetailState> emit) async {
     final currentState = state;
@@ -65,16 +57,13 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
       final List<NewsArticle> updatedBookmarks;
 
       if (currentState.isBookmarked) {
-        // Remove from bookmarks
         updatedBookmarks =
             await _newsRepository.removeFromBookmarks(_currentArticle!);
       } else {
-        // Add to bookmarks
         updatedBookmarks =
             await _newsRepository.addToBookmarks(_currentArticle!);
       }
 
-      // Check if article is still bookmarked after the operation
       final isBookmarked = updatedBookmarks
           .any((bookmarked) => bookmarked.title == _currentArticle!.title);
 
@@ -86,8 +75,6 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
     }
   }
 
-  /// Handles news sharing
-  /// Shares the article with text and optionally image
   Future<void> _onNewsDetailShared(
       NewsDetailShared event, Emitter<NewsDetailState> emit) async {
     final currentState = state;
@@ -111,17 +98,14 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
 
       if (imageUrl.isNotEmpty) {
         try {
-          // Download the image and store it locally
           final response = await http.get(Uri.parse(imageUrl));
           final directory = await getTemporaryDirectory();
           final filePath = "${directory.path}/news_image.jpg";
           File imageFile = File(filePath);
           await imageFile.writeAsBytes(response.bodyBytes);
 
-          // Share the image with text
           await Share.shareXFiles([XFile(filePath)], text: shareText);
         } catch (imageError) {
-          // If image sharing fails, fallback to text only
           await Share.share(shareText);
         }
       } else {
@@ -130,7 +114,6 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
 
       emit(const NewsDetailShareCompleted(success: true));
 
-      // Return to loaded state after sharing
       await Future.delayed(const Duration(milliseconds: 500));
       emit(currentState);
     } catch (error) {
@@ -139,14 +122,11 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
         message: 'Failed to share: ${error.toString()}',
       ));
 
-      // Return to loaded state after error
       await Future.delayed(const Duration(milliseconds: 2000));
       emit(currentState);
     }
   }
 
-  /// Handles URL opening
-  /// Launches the article URL in external browser
   Future<void> _onNewsDetailUrlOpened(
       NewsDetailUrlOpened event, Emitter<NewsDetailState> emit) async {
     try {
@@ -159,7 +139,6 @@ class NewsDetailBloc extends Bloc<NewsDetailEvent, NewsDetailState> {
     } catch (error) {
       emit(NewsDetailError('Failed to open URL: ${error.toString()}'));
 
-      // Return to previous state after error
       await Future.delayed(const Duration(milliseconds: 2000));
       if (_currentArticle != null) {
         final isBookmarked =
